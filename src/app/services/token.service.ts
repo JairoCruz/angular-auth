@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { getCookie, setCookie, removeCookie } from 'typescript-cookie';
 
 @Injectable({
   providedIn: 'root'
@@ -7,17 +8,19 @@ export class TokenService {
 
   constructor() { }
 
+  // Notar que jwt tiene su propio tiempo de expiracion, aca en saveCookie, se le
+  // establece la expiracion propiamente a la cookie.
   saveToken(token: string) {
-    localStorage.setItem('token', token);
+    setCookie('token-trello', token, { expires: 365, path: '/'});
   }
 
   getToken() {
-    const token = localStorage.getItem('token');
+    const token = getCookie('token-trello');
     return token;
   }
 
   removeToken() {
-    localStorage.removeItem('token');
+    removeCookie('token-trello');
   }
 
 }
