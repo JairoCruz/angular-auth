@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '@environments/environment'; // este es un short y esta definido en el archivo tsconfig.json en la raiz del proyecto
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
+import { TokenService } from './token.service';
+import { ResponseLogin } from '@models/auth.models';
 
 @Injectable({
   providedIn: 'root'
@@ -12,15 +14,22 @@ export class AuthService {
   apiUrl = environment.API_URL;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private tokenService: TokenService
   ) { }
 
-
+  // Login nos devuelve el access_token
+  // Tipo la respuesta devuelta por el server
   login(email: string, password: string) {
-    return this.http.post(`${this.apiUrl}/api/v1/auth/login`, {
+    return this.http.post<ResponseLogin>(`${this.apiUrl}/api/v1/auth/login`, {
       email,
       password
-    });
+    })
+    .pipe(
+      tap(response => {
+        this.tokenService.saveToken(response.access_token);
+      })
+    );
   }
 
 
