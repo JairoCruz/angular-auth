@@ -7,9 +7,10 @@ import {
   HttpContextToken,
   HttpContext,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 
 import { TokenService } from '@services/token.service';
+import { AuthService } from '@services/auth.service';
 
 const CHECK_TOKEN = new HttpContextToken<boolean>(() => false);
 
@@ -22,12 +23,19 @@ export class TokenInterceptor implements HttpInterceptor {
 
   constructor(
     private tokenService: TokenService,
+    private authService: AuthService,
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
    // Sele agrega un contexto, para verificar si hay un token valido, de lo contrario sigue normalmente
    if (request.context.get(CHECK_TOKEN)) {
-    return this.addToken(request, next);
+    const isValidToken = this.tokenService.isValidToken();
+    if (isValidToken) {
+      return this.addToken(request, next);
+    } else {
+      return this.updateAccessTokenAndRefreshToken(request, next);
+    }
+    
    }
    return next.handle(request);
     
@@ -46,6 +54,21 @@ export class TokenInterceptor implements HttpInterceptor {
     }
     // Se devuelve el request original sin haberlo modificado,
     // en caso no haya un accessToken.
+    return next.handle(request);
+  }
+
+
+  // Esta funcionabilidad le da al interceptor la capacidad de verificar si la session ya expiro, si ya lo hizo entonces con el refresh token
+  // vuelve a solicitar un nuevo token y se lo agrega de nuevo a la cookie.
+  private updateAccessTokenAndRefreshToken(request: HttpRequest<unknown>, next: HttpHandler) {
+    const refreshToken = this.tokenService.getRefreshToken();
+    const isValidRefreshToken = this.tokenService.isValidRefreshToken();
+    if (refreshToken && isValidRefreshToken) {
+      return this.authService.refreshToken(refreshToken)
+          .pipe(
+            switchMap(() => this.addToken(request, next)),
+          )
+    }
     return next.handle(request);
   }
 
