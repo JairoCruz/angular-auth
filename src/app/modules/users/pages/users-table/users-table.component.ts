@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { DataSourceUser } from './data-source';
+import { UsersService } from '@services/users.service';
 
 @Component({
   selector: 'app-users-table',
   templateUrl: './users-table.component.html'
 })
-export class UsersTableComponent  {
+export class UsersTableComponent implements OnInit  {
 
   dataSource = new DataSourceUser();
   columns: string[] = ['id', 'avatar', 'name', 'email'];
 
-  constructor() {
+  constructor(
+    private usersService: UsersService,
+  ) {
+    /*
+    // Recuperare los datos del endpoint
     this.dataSource.init([
       {
         id: 1,
@@ -31,7 +36,15 @@ export class UsersTableComponent  {
         email: 'mail3@mail.com',
         avatar: 'https://api.lorem.space/image/face?w=150&h=150'
       }
-    ]);
+    ]); */
+  }
+
+
+  ngOnInit(): void {
+    this.usersService.getUsers()
+    .subscribe(users => {
+      this.dataSource.init(users);
+    });
   }
 
 }
