@@ -6,6 +6,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { TokenService } from './token.service';
 import { ResponseLogin } from '@models/auth.models';
 import { User } from '@models/user.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +14,22 @@ import { User } from '@models/user.model';
 export class AuthService {
 
   apiUrl = environment.API_URL;
+  // Este es un estado general para user, para que cualquier componente
+  // que lo solicite pueda recuperarlo, evitando esta haciendo peticiones get por cada
+  // vez que se solicite.
+  user$ = new BehaviorSubject<User | null>(null);
 
   constructor(
     private http: HttpClient,
     private tokenService: TokenService
   ) { }
+
+  //No funciono como esperaba, user tabla en lugar de utilizar este
+  // metodo mejor se subscribe al user$.
+  // Este metodo no esta siendo utilizado solo lo dejo por referencia
+  getDataUser() {
+    return this.user$.getValue();
+  }
 
   // Login nos devuelve el access_token
   // Tipo la respuesta devuelta por el server
@@ -73,7 +85,12 @@ export class AuthService {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    });
+    }).pipe(
+      // Con esto al recuperar el profile, se almacena en el user$
+      tap(user => {
+        this.user$.next(user);
+      })
+    );
   }
 
   logout () {
