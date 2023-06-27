@@ -8,6 +8,8 @@ import { ResponseLogin } from '@models/auth.models';
 import { User } from '@models/user.model';
 import { BehaviorSubject } from 'rxjs';
 
+import { checkToken } from '@interceptors/token.interceptor';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -80,12 +82,8 @@ export class AuthService {
 
 
   getProfile() {
-    const token = this.tokenService.getToken();
-    return this.http.get<User>(`${this.apiUrl}/api/v1/auth/profile`,{
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).pipe(
+    // aca utilizamos el contexto que se creo en el interceptor
+    return this.http.get<User>(`${this.apiUrl}/api/v1/auth/profile`,{ context: checkToken() }).pipe(
       // Con esto al recuperar el profile, se almacena en el user$
       tap(user => {
         this.user$.next(user);
