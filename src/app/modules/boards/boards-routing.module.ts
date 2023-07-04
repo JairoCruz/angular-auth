@@ -10,7 +10,7 @@ const routes: Routes = [
     component: BoardsComponent
   },
   {
-    path: ':id',
+    path: ':id', // este es el parametro que se envia y se recibe en board.service.ts
     component: BoardComponent
   },
 ];
