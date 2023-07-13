@@ -12,6 +12,7 @@ import { ToDo, Column } from '@models/todo.model';
 import { BoardService } from '@services/board.service';
 import { Board } from '@models/board.model';
 import { Card } from '@models/card.model';
+import { CardsService } from '@services/cards.service';
 
 @Component({
   selector: 'app-board',
@@ -75,7 +76,8 @@ export class BoardComponent implements OnInit {
   constructor(
     private dialog: Dialog,
     private route: ActivatedRoute,
-    private boardService: BoardService
+    private boardService: BoardService,
+    private cardService: CardsService
     ) {}
 
 
@@ -105,8 +107,10 @@ export class BoardComponent implements OnInit {
       );
     }
 
-    const rta = this.boardService.getPosition(event.container.data, event.currentIndex);
-    console.log(rta);
+    const position = this.boardService.getPosition(event.container.data, event.currentIndex);
+    //console.log(rta);
+    const card = event.container.data[event.currentIndex];
+    this.updateCard(card, position);
   }
 
   addColumn() {
@@ -136,6 +140,13 @@ export class BoardComponent implements OnInit {
 
         this.board = board;
         console.log("datos", this.board);
+      });
+  }
+
+  private updateCard(card: Card, position: number) {
+    this.cardService.update(card.id, { position })
+      .subscribe(cardUpdate => {
+        console.log(cardUpdate);
       });
   }
 
