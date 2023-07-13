@@ -110,7 +110,13 @@ export class BoardComponent implements OnInit {
     const position = this.boardService.getPosition(event.container.data, event.currentIndex);
     //console.log(rta);
     const card = event.container.data[event.currentIndex];
-    this.updateCard(card, position);
+
+    const listId = event.container.id;
+
+   // console.log(listId, 'listId');
+
+    this.updateCard(card, position, listId);
+
   }
 
   addColumn() {
@@ -143,8 +149,8 @@ export class BoardComponent implements OnInit {
       });
   }
 
-  private updateCard(card: Card, position: number) {
-    this.cardService.update(card.id, { position })
+  private updateCard(card: Card, position: number, listId: string | number) {
+    this.cardService.update(card.id, { position, listId })
       .subscribe(cardUpdate => {
         console.log(cardUpdate);
       });
