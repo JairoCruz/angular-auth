@@ -1,4 +1,5 @@
 import { Component, OnInit} from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
   CdkDragDrop,
@@ -32,6 +33,10 @@ import { List } from '@models/list.model';
 export class BoardComponent implements OnInit {
 
   board: Board | null = null;
+  inputCard = new FormControl<string>('', {
+    nonNullable: true,
+    validators: [Validators.required]
+  });
   //showCardForm = false;
 
  /* 
@@ -79,7 +84,7 @@ export class BoardComponent implements OnInit {
     private dialog: Dialog,
     private route: ActivatedRoute,
     private boardService: BoardService,
-    private cardService: CardsService
+    private cardService: CardsService,
     ) {}
 
 
@@ -174,6 +179,16 @@ export class BoardComponent implements OnInit {
         }
       });
     }
+  }
+
+  createCard() {
+    const title = this.inputCard.value;
+    console.log(title);
+
+  }
+
+  closeCardForm(list: List) {
+    list.showCardForm = false;
   }
 
 
