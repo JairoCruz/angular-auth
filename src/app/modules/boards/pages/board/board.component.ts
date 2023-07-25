@@ -13,6 +13,7 @@ import { BoardService } from '@services/board.service';
 import { Board } from '@models/board.model';
 import { Card } from '@models/card.model';
 import { CardsService } from '@services/cards.service';
+import { List } from '@models/list.model';
 
 @Component({
   selector: 'app-board',
@@ -31,6 +32,7 @@ import { CardsService } from '@services/cards.service';
 export class BoardComponent implements OnInit {
 
   board: Board | null = null;
+  //showCardForm = false;
 
  /* 
  // Esto era para ejemplo codigo quemado, se comenta para agregar
@@ -154,6 +156,24 @@ export class BoardComponent implements OnInit {
       .subscribe(cardUpdate => {
         console.log(cardUpdate);
       });
+  }
+
+  openFormCard(list: List) {
+    //list.showCardForm = !list.showCardForm;
+    if (this.board?.lists) {
+      this.board.lists = this.board.lists.map(iteratorList => {
+        if (iteratorList.id === list.id) {
+          return {
+            ...iteratorList,
+            showCardForm: true,
+          }
+        }
+        return {
+          ...iteratorList,
+          showCardForm: false,
+        }
+      });
+    }
   }
 
 
