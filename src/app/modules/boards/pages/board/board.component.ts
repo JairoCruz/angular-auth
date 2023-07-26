@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, OnDestroy} from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -32,7 +32,7 @@ import { BACKGROUNDS } from '@models/colors.model';
     `,
   ],
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit, OnDestroy {
 
   board: Board | null = null;
   inputCard = new FormControl<string>('', {
@@ -95,6 +95,12 @@ export class BoardComponent implements OnInit {
     private cardService: CardsService,
     private listService: ListService,
     ) {}
+
+
+  // Al destruir este componente, se establecera el navbar a su color default
+  ngOnDestroy(): void {
+    this.boardService.setBackgroundColor('sky');
+  }
 
 
   ngOnInit(): void {
@@ -172,7 +178,8 @@ export class BoardComponent implements OnInit {
       .subscribe(board => {
 
         this.board = board;
-        console.log("datos", this.board);
+        this.boardService.setBackgroundColor(this.board.backgroundColor);
+        //console.log("datos", this.board);
       });
   }
 
