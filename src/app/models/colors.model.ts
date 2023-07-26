@@ -61,3 +61,36 @@ export const COLORS: ObjColors = {
         'text-white': true,
       },
 }
+
+export const BACKGROUNDS: ObjColors = {
+  success: {
+    'bg-success-600': true,
+  },
+  primary: {
+    'bg-primary-600': true,
+  },
+  danger: {
+    'bg-danger-600': true,
+  },
+  light: {
+    'bg-gray-600': true,
+  },
+  sky: {
+    'bg-sky-600': true,
+  },
+  yellow: {
+    'bg-yellow-600': true,
+  },
+  green: {
+    'bg-green-600': true,
+  },
+  red: {
+    'bg-red-600': true,
+  },
+  violet: {
+    'bg-violet-600': true,
+  },
+  gray: {
+    'bg-grey-600': true,
+  },
+}
