@@ -15,6 +15,7 @@ import { Board } from '@models/board.model';
 import { Card } from '@models/card.model';
 import { CardsService } from '@services/cards.service';
 import { List } from '@models/list.model';
+import { ListService } from '@services/lists.service';
 
 @Component({
   selector: 'app-board',
@@ -90,6 +91,7 @@ export class BoardComponent implements OnInit {
     private route: ActivatedRoute,
     private boardService: BoardService,
     private cardService: CardsService,
+    private listService: ListService,
     ) {}
 
 
@@ -133,7 +135,21 @@ export class BoardComponent implements OnInit {
 
   addList() {
    const title = this.inputList.value;
-   console.log(title)
+   if (this.board) {
+    this.listService.create({
+      title,
+      boardId: this.board.id,
+      position: this.boardService.getPositionNewItem(this.board.lists)
+    })
+    .subscribe(list => {
+      this.board?.lists.push({
+        ...list,
+        cards: []
+      });
+      this.showListForm = true;
+      this.inputList.setValue('');
+    })
+   }
   }
 
   openDialog(card: Card) {
@@ -190,7 +206,7 @@ export class BoardComponent implements OnInit {
         title,
         listId: list.id,
         boardId: this.board.id,
-        position: this.boardService.getPositionNewCard(list.cards),
+        position: this.boardService.getPositionNewItem(list.cards),
       }).subscribe( card => {
         list.cards.push(card);
         this.inputCard.setValue('');
