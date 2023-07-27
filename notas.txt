@@ -1,0 +1,7 @@
+Retos pendientes por agregar:
+Detalles en UI
+Eliminar Card/List/Board
+Editar Card/List/Board
+Reordenar Listas
+Vista en modo Tabla
+Profile
